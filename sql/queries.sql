@@ -1,7 +1,5 @@
--- ==========================================
 -- E-Commerce Analytics Queries
 -- Target Table: 'transactions'
--- ==========================================
 
 -- 1. Total Revenue Overview
 -- Calculates the top-level KPI metrics for the business.
