@@ -1,0 +1,27 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Databases
+*.sqlite3
+*.db
+
+# OS specific files
+.DS_Store
+
+# Data files (Exclude processed and db files, keep our raw sample data)
+data/processed_data.csv
+data/*.db

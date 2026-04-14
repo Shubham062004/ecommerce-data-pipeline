@@ -1,0 +1,11 @@
+transaction_id,customer_id,city,product_name,category,price,quantity,transaction_date,status
+1001,C101,New York,Laptop,Electronics,1200.50,1,2023-10-01,completed
+1002,C102,Los Angeles,Wireless Mouse,Electronics,25.99,2,2023-10-01,completed
+1003,C103,Chicago,Coffee Maker,Home,75.00,1,2023-10-02,pending
+1004,C104,New York,Running Shoes,Sports,110.00,1,2023-10-02,completed
+1005,C101,New York,Headphones,Electronics,,1,2023-10-03,completed
+1006,C105,San Francisco,Desk Chair,Furniture,200.00,1,2023-10-03,cancelled
+1007,C106,Chicago,Blender,Home,45.50,-1,2023-10-04,completed
+1008,C102,Los Angeles,Keyboard,Electronics,85.00,1,2023-10-04,completed
+1009,C107,Houston,Monitor,Electronics,300.00,2,2023-10-04,
+1010,C108,Miami,Water Bottle,Sports,15.00,3,2023-10-05,completed
