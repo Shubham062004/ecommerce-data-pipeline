@@ -1,42 +1,46 @@
 import os
 import logging
+from dotenv import load_dotenv
 
 from extract import extract_data
 from transform import process_data
 from load import load_data
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Load environment variables
+load_dotenv()
 
-# Define absolute paths dynamically
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_PATH = os.path.join(BASE_DIR, 'data', 'raw_data.csv')
-DB_PATH = os.path.join(BASE_DIR, 'data', 'ecommerce.db')
+# Configure logging
+if not logging.getLogger().hasHandlers():
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+# Constants from Environment
+# Use default paths if env vars are not set
+DATA_SOURCE = os.getenv('DATA_SOURCE', 'data/raw_data.csv')
 
 def run_pipeline():
     """
-    Main ETL Orchestration Component.
-    Executes the Extract, Transform, and Load steps sequentially.
+    Orchestrates the ETL process using modular scripts.
     """
-    logging.info("=== Starting E-Commerce ETL Pipeline ===")
+    logger.info("=== Starting Production ETL Pipeline ===")
     
     try:
         # Step 1: Extract
-        logging.info("--- Phase 1: EXTRACT ---")
-        raw_df = extract_data(DATA_PATH)
+        logger.info("PHASE 1: Extracting data from source.")
+        raw_df = extract_data(DATA_SOURCE)
         
         # Step 2: Transform
-        logging.info("--- Phase 2: TRANSFORM ---")
+        logger.info("PHASE 2: Cleaning and Engineering features.")
         transformed_df = process_data(raw_df)
         
         # Step 3: Load
-        logging.info("--- Phase 3: LOAD ---")
-        load_data(transformed_df, DB_PATH, table_name='transactions')
+        logger.info("PHASE 3: Loading data into destination warehouse.")
+        load_data(transformed_df, table_name='transactions')
         
-        logging.info("=== ETL Pipeline Completed Successfully! ===")
+        logger.info("=== ETL Pipeline Completed Successfully ===")
         
     except Exception as e:
-        logging.error(f"=== ETL Pipeline Failed: {str(e)} ===")
+        logger.error(f"Pipeline failed during execution: {e}")
         raise
 
 if __name__ == "__main__":

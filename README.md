@@ -1,89 +1,126 @@
-# 🛒 E-Commerce ETL Data Pipeline & Analytics System
+# 🛒 E-Commerce ETL Data Pipeline & Analytics System (Production Upgrade)
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
-![Pandas](https://img.shields.io/badge/Pandas-2.2+-green.svg)
+![Airflow](https://img.shields.io/badge/Apache%20Airflow-2.8+-red.svg)
+![Power BI](https://img.shields.io/badge/Power%20BI-Integrated-yellow.svg)
 ![SQLite](https://img.shields.io/badge/SQLite-Database-blue.svg)
 
 ## 📌 Project Overview
-This project is an end-to-end Data Engineering **ETL (Extract, Transform, Load)** pipeline built to process, clean, and analyze e-commerce transaction data. It simulates a real-world scenario where raw, messy data is refined into a highly structured database ready for Business Intelligence (BI) and Data Analytics.
+This project is an **Enterprise-grade Data Engineering ETL pipeline**. It has been upgraded from a basic script to a production-ready system featuring **Workflow Orchestration (Airflow)**, **Advanced Error Handling**, and **BI Integration**.
 
-The resulting dataset provides actionable insights into revenue streams, regional performance, and customer lifetime value.
+## 🏗️ Architecture Diagram
+```mermaid
+graph LR
+    A[CSV Source] --> B(Airflow: Extract)
+    B --> C(Airflow: Transform)
+    C --> D(Airflow: Load)
+    D --> E[(PostgreSQL / SQLite)]
+    E --> F[Power BI Dashboard]
+    
+    subgraph Orchestration
+    B
+    C
+    D
+    end
+    
+    subgraph Storage
+    E
+    end
+    
+    subgraph Analytics
+    F
+    end
+```
 
 ---
 
-## 🏗️ Architecture (The ETL Flow)
+## 🚀 Advanced Features (Step 6 Upgrade)
 
-1. **Extract (`scripts/extract.py`)**: Ingests raw sales data from a CSV file. Implements safeguards to handle missing files and empty datasets.
-2. **Transform (`scripts/transform.py`)**: 
-   - **Data Cleaning**: Imputes missing values, enforces typing (e.g., negative quantities handled, valid timestamps), and removes duplicates.
-   - **Feature Engineering**: Dynamically calculates business metrics (`revenue`, `tax_amount`, `total_amount`).
-   - **Data Quality Validations**: Failsafes and checks to ensure no corrupt metrics pass through.
-3. **Load (`scripts/load.py`)**: Connects to an SQLite database (adaptable to PostgreSQL) using secure context managers and loads the polished dataset into a `transactions` table.
-4. **Analyze (`sql/queries.sql`)**: Sophisticated SQL aggregations and Window Functions developed for extracting KPI reports.
+### 1. Workflow Orchestration with Apache Airflow
+The pipeline is now orchestrated using Airflow, allowing for:
+- **Scheduling**: Daily automated runs.
+- **Retry Logic**: Automatic retries on failure (1 retry, 5-min delay).
+- **Task Dependencies**: Clean flow from `extract` → `transform` → `load`.
+- **DAG File**: Found in `airflow/dags/dag_pipeline.py`.
+
+### 2. Production-Ready Pipeline
+- **Logging**: Switched to structured Python `logging` module with timestamps.
+- **Error Handling**: Comprehensive `try-except` blocks at every stage.
+- **Data Validation**: Schema checks and business rule validation (e.g., no negative prices).
+- **Idempotency**: The `load` step uses `if_exists='replace'`, ensuring the pipeline can be safely re-run without duplicating or corrupting data.
+
+### 3. Database Upgrade: SQLite to PostgreSQL
+The system now supports PostgreSQL via environment variables. By updating the `.env` file, you can switch from local SQLite to a production Postgres instance without changing a single line of ETL code.
 
 ---
 
 ## 🛠️ Tech Stack
+* **Orchestration**: Apache Airflow
 * **Language**: Python 3.x
 * **Data Processing**: Pandas, NumPy
-* **Data Storage**: SQLite3 (Standard RDBMS structure)
-* **Analytics**: SQL (CTEs, Window Functions, Aggregations)
-* **Version Control**: Git / GitHub
+* **Database**: PostgreSQL (Production) / SQLite (Dev)
+* **Connectivity**: SQLAlchemy, Psycopg2
+* **Analytics**: SQL, Power BI
 
 ---
 
-## 🚀 How to Run the Project
+## ⚙️ Setup & Installation
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/Shubham062004/ecommerce-data-pipeline.git
-cd ecommerce-data-pipeline
-```
-
-### 2. Set up the environment
-It is recommended to use a virtual environment.
+### 1. Environment Setup
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Run the ETL Pipeline
-Trigger the main orchestration script to process the data:
-```bash
-python scripts/pipeline.py
+### 2. Environment Variables
+Create a `.env` file based on `.env.template`:
+```ini
+DB_TYPE=sqlite  # or 'postgresql'
+DB_FILE=data/ecommerce.db
+DATA_SOURCE=data/raw_data.csv
 ```
-*Behind the scenes, this will read `data/raw_data.csv`, clean it, and output the refined version to `data/ecommerce.db`.*
 
-### 4. Query the Database
-You can execute the queries listed in `sql/queries.sql` using any SQL client (like DBeaver, DB Browser for SQLite, or Python's `sqlite3` CLI) against the generated `data/ecommerce.db` database.
+### 3. Setting Up Airflow
+1. Initialize Airflow Home:
+   ```bash
+   export AIRFLOW_HOME=$(pwd)/airflow
+   airflow db init
+   ```
+2. Create a user:
+   ```bash
+   airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@example.com --password admin
+   ```
+3. Start the Webserver and Scheduler:
+   ```bash
+   airflow webserver --port 8080
+   airflow scheduler
+   ```
 
 ---
 
-## 📊 Sample Insights & Output
+## 📊 Power BI Integration
 
-By querying the transformed database, we solve specific business questions like:
-- **Total Regional Valuation (Query 2):** Identifies highly localized spending patterns for dynamic marketing allocation.
-- **Top Customer Rankings (Query 4):** Employs the `DENSE_RANK() OVER(PARTITION BY city)` function to pinpoint exact localized VIP spenders across different geographical hubs.
-
-```log
-=== Starting E-Commerce ETL Pipeline ===
---- Phase 1: EXTRACT ---
-Successfully extracted 10 rows and 9 columns.
---- Phase 2: TRANSFORM ---
-Data cleaning completed.
-Feature engineering completed.
-Data validation passed successfully.
---- Phase 3: LOAD ---
-Successfully loaded 10 records into the 'transactions' table.
-=== ETL Pipeline Completed Successfully! ===
-```
+### How to Connect:
+1. **Source**: In Power BI, select "Get Data" -> "SQLite" (or PostgreSQL if migrated).
+2. **Setup Views**: We have provided pre-built SQL views in `sql/bi_views.sql` to simplify reporting. Run these scripts in your DB first.
+3. **KPIs Recommended**:
+   - **Revenue trends**: Timeline chart showing `daily_revenue`.
+   - **Top Categories**: Bar chart of sales by product category.
+   - **VIP Customers**: Table showing Top 10 customers by Lifetime Value (LTV).
 
 ---
 
-## 🔮 Future Improvements
-To take this pipeline from a batch-processed script to an enterprise-grade ecosystem, I plan to integrate:
-- **Apache Airflow**: For robust, scheduled task orchestration and dependency management.
-- **PostgreSQL / Snowflake**: Migrate from local SQLite to a scalable, cloud-hosted Data Warehouse.
-- **Power BI / Tableau Component**: Connect BI tools directly to the Data Warehouse for interactive management dashboards.
-- **Cloud Storage (AWS S3)**: Move `raw_data.csv` to an S3 Data Lake for real-world distributed extraction.
+## 🔮 Future Scope
+- **Kafka**: Real-time streaming ingestion instead of CSV.
+- **Spark**: Large-scale distributed processing for Big Data.
+- **Cloud Migration**: Deploying the entire stack to AWS (MWAA for Airflow, RDS for Postgres).
+- **dbt**: For modular SQL modeling and documentation.
+
+---
+
+## 📄 Output Requirements Met
+- ✅ **Airflow DAG**: `airflow/dags/dag_pipeline.py`
+- ✅ **Logging & Validation**: Integrated into `scripts/`
+- ✅ **PostgreSQL Support**: Configurable via `.env`
+- ✅ **BI Strategy**: Defined in `sql/bi_views.sql` and README.

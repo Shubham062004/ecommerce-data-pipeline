@@ -1,35 +1,56 @@
 import pandas as pd
-import sqlite3
 import logging
 import os
+from sqlalchemy import create_engine
+from dotenv import load_dotenv
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Load environment variables
+load_dotenv()
 
-def load_data(df: pd.DataFrame, db_path: str, table_name: str = 'sales_data'):
+# Configure logging if not already configured
+if not logging.getLogger().hasHandlers():
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+def get_db_connection():
     """
-    Loads transformed data into a SQLite database. 
-    Can be easily swapped for a SQLAlchemy connection to PostgreSQL/MySQL.
-    
-    Args:
-        df (pd.DataFrame): The transformed dataframe to load.
-        db_path (str): The path to the SQLite database file.
-        table_name (str): The name of the target database table.
+    Creates a database connection based on environment variables.
+    Supports SQLite and PostgreSQL.
     """
-    logging.info(f"Starting data load into database at {db_path}, table: '{table_name}'...")
+    db_type = os.getenv('DB_TYPE', 'sqlite').lower()
     
-    # Ensure directory exists before connecting
-    os.makedirs(os.path.dirname(db_path), exist_ok=True)
+    if db_type == 'sqlite':
+        db_file = os.getenv('DB_FILE', 'data/ecommerce.db')
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(db_file), exist_ok=True)
+        return create_engine(f'sqlite:///{db_file}')
+    
+    elif db_type == 'postgresql':
+        user = os.getenv('DB_USER')
+        password = os.getenv('DB_PASSWORD')
+        host = os.getenv('DB_HOST', 'localhost')
+        port = os.getenv('DB_PORT', '5432')
+        name = os.getenv('DB_NAME')
+        return create_engine(f'postgresql://{user}:{password}@{host}:{port}/{name}')
+    
+    else:
+        raise ValueError(f"Unsupported database type: {db_type}")
+
+def load_data(df: pd.DataFrame, table_name: str = 'transactions'):
+    """
+    Loads transformed data into the database.
+    """
+    logger.info(f"Initiating load to table: '{table_name}'")
     
     try:
-        # Connect to SQLite. Using a context manager ensures safe connection handling.
-        with sqlite3.connect(db_path) as conn:
-            # Write records to the database. 'replace' drops the table if it already exists.
+        engine = get_db_connection()
+        
+        # Load data (if_exists='replace' ensures idempotency for full refresh)
+        with engine.connect() as conn:
             df.to_sql(table_name, conn, if_exists='replace', index=False)
-            logging.info(f"Successfully loaded {len(df)} records into the '{table_name}' table.")
+            
+        logger.info(f"Load successful: {len(df)} records written to {table_name}.")
             
     except Exception as e:
-        logging.error(f"Failed to load data into database: {str(e)}")
+        logger.error(f"Load failed: {e}")
         raise
-    
-    logging.info("Database connection closed gracefully.")
