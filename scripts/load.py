@@ -1,56 +1,56 @@
 import pandas as pd
+import sqlite3
 import logging
 import os
-from sqlalchemy import create_engine
-from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Configure logging if not already configured
-if not logging.getLogger().hasHandlers():
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
-
-def get_db_connection():
+def get_db_connection(db_path: str):
     """
-    Creates a database connection based on environment variables.
-    Supports SQLite and PostgreSQL.
+    Returns a database connection dynamically based on Environment Variables.
+    Allows seamless upgrading from SQLite to PostgreSQL for production.
     """
-    db_type = os.getenv('DB_TYPE', 'sqlite').lower()
+    db_type = os.getenv('DB_TYPE', 'sqlite')
     
-    if db_type == 'sqlite':
-        db_file = os.getenv('DB_FILE', 'data/ecommerce.db')
-        # Ensure the directory exists
-        os.makedirs(os.path.dirname(db_file), exist_ok=True)
-        return create_engine(f'sqlite:///{db_file}')
-    
-    elif db_type == 'postgresql':
-        user = os.getenv('DB_USER')
-        password = os.getenv('DB_PASSWORD')
-        host = os.getenv('DB_HOST', 'localhost')
-        port = os.getenv('DB_PORT', '5432')
-        name = os.getenv('DB_NAME')
-        return create_engine(f'postgresql://{user}:{password}@{host}:{port}/{name}')
-    
-    else:
-        raise ValueError(f"Unsupported database type: {db_type}")
-
-def load_data(df: pd.DataFrame, table_name: str = 'transactions'):
-    """
-    Loads transformed data into the database.
-    """
-    logger.info(f"Initiating load to table: '{table_name}'")
-    
-    try:
-        engine = get_db_connection()
+    if db_type == 'postgres':
+        # Example PostgreSQL connection using SQLAlchemy
+        import sqlalchemy
+        db_user = os.getenv('DB_USER', 'postgres')
+        db_password = os.getenv('DB_PASSWORD', 'password')
+        db_host = os.getenv('DB_HOST', 'localhost')
+        db_name = os.getenv('DB_NAME', 'ecommerce_db')
         
-        # Load data (if_exists='replace' ensures idempotency for full refresh)
-        with engine.connect() as conn:
-            df.to_sql(table_name, conn, if_exists='replace', index=False)
-            
-        logger.info(f"Load successful: {len(df)} records written to {table_name}.")
+        engine = sqlalchemy.create_engine(f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}")
+        logging.info("Connected to Production PostgreSQL Data Warehouse.")
+        return engine
+    else:
+        # Default to local SQLite
+        os.makedirs(os.path.dirname(db_path), exist_ok=True)
+        conn = sqlite3.connect(db_path)
+        logging.info("Connected to local SQLite Database.")
+        return conn
+
+def load_data(df: pd.DataFrame, db_path: str, table_name: str = 'transactions'):
+    """
+    Loads transformed data into the database. 
+    Uses if_exists='replace' to ensure the pipeline is idempotent (safe to rerun).
+    """
+    logging.info(f"Starting data load into database, table: '{table_name}'...")
+    
+    conn = None
+    try:
+        conn = get_db_connection(db_path)
+        
+        # 'replace' ensures idempotency for batch loads
+        df.to_sql(table_name, conn, if_exists='replace', index=False)
+        logging.info(f"Successfully loaded {len(df)} records into '{table_name}'.")
             
     except Exception as e:
-        logger.error(f"Load failed: {e}")
+        logging.error(f"Failed to load data into database: {str(e)}")
         raise
+    finally:
+        # Close connection gracefully if using sqlite3
+        if conn and isinstance(conn, sqlite3.Connection):
+            conn.close()
+            logging.info("Database connection closed.")
