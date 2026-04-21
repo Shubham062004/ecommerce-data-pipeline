@@ -9,6 +9,8 @@
 ## 📌 Project Overview
 This project is an end-to-end Data Engineering ecosystem built to process, clean, and analyze e-commerce transaction data. It features a **Hybrid Architecture** combining robust **Batch ETL** (Python, Airflow) with real-time **Streaming Ingestion** (Kafka).
 
+The system is designed to provide actionable business insights into revenue trends, regional performance, and customer lifetime value.
+
 ---
 
 ## 🏗️ Architecture & Orchestration
@@ -17,12 +19,44 @@ This project is an end-to-end Data Engineering ecosystem built to process, clean
 
 ### 1. Batch Pipeline (Historical Data)
 * **Orchestration**: Managed by **Apache Airflow** (`dags/ecommerce_etl_dag.py`).
-* **Process**: Extracts bulk CSV data, transforms it via Pandas, and loads it into the Data Warehouse.
+* **Process**: Extracts bulk CSV data, transforms it via Pandas, and loads it into the Data Warehouse daily.
 
 ### 2. Real-Time Pipeline (Streaming Data)
-* **Ingestion**: **Apache Kafka** acts as the message broker.
+* **Ingestion**: **Apache Kafka** acts as the message broker for sub-second event processing.
 * **Producer**: `scripts/producer.py` simulates real-time order generation.
 * **Consumer**: `scripts/consumer.py` processes incoming streams and stores them in the `transactions_stream` table.
+
+---
+
+## 📂 Project Structure
+```text
+ecommerce-data-pipeline/
+├── dags/
+│   └── ecommerce_etl_dag.py    # Airflow DAG for batch orchestration
+├── data/
+│   ├── raw_data.csv            # Sample input data
+│   └── ecommerce.db            # SQLite Data Warehouse
+├── scripts/
+│   ├── extract.py              # Data extraction module
+│   ├── transform.py            # Data cleaning & feature engineering
+│   ├── load.py                 # Database loading module
+│   ├── pipeline.py             # Batch pipeline runner
+│   ├── producer.py             # Kafka event producer (Streaming)
+│   └── consumer.py             # Kafka event consumer (Streaming)
+├── sql/
+│   └── queries.sql             # Analytical SQL queries (CTEs, Window Functions)
+├── requirements.txt            # Project dependencies
+└── README.md                   # Project documentation
+```
+
+---
+
+## 🌟 Key Features
+- **Hybrid Data Velocity**: Seamlessly handles both daily batch uploads and sub-second real-time streams.
+- **Production-Ready Transformation**: Robust data cleaning, handling nulls, type enforcement, and financial feature engineering.
+- **Automated Orchestration**: Scheduled execution and error retries managed by Apache Airflow.
+- **Advanced SQL Analytics**: Utilizes CTEs and Window Functions for deep regional performance insights.
+- **Fault-Tolerant Loading**: Idempotent database operations ensuring data consistency across multiple runs.
 
 ---
 
