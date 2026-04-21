@@ -3,85 +3,77 @@
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![Pandas](https://img.shields.io/badge/Pandas-2.2+-green.svg)
 ![Airflow](https://img.shields.io/badge/Apache_Airflow-Orchestration-blue.svg)
+![Kafka](https://img.shields.io/badge/Apache_Kafka-Streaming-red.svg)
 ![Database](https://img.shields.io/badge/SQLite%2FPostgreSQL-Database-blue.svg)
 
 ## 📌 Project Overview
-This project is an end-to-end Data Engineering **ETL (Extract, Transform, Load)** pipeline built to process, clean, and analyze e-commerce transaction data. It utilizes Python, Pandas, SQL, and Apache Airflow to orchestrate the refinement of raw messy data into a structured Data Warehouse ready for **Business Intelligence (Power BI)** reporting.
+This project is an end-to-end Data Engineering ecosystem built to process, clean, and analyze e-commerce transaction data. It features a **Hybrid Architecture** combining robust **Batch ETL** (Python, Airflow) with real-time **Streaming Ingestion** (Kafka).
 
 ---
 
 ## 🏗️ Architecture & Orchestration
 
-![ETL Architecture](https://via.placeholder.com/800x300.png?text=Raw+CSV+-%3E+Python(Pandas)+-%3E+PostgreSQL/SQLite+-%3E+Power+BI)
+![ETL Architecture](https://via.placeholder.com/800x400.png?text=Hybrid+Data+Pipeline:+Batch+(Airflow)+%2B+Streaming+(Kafka))
 
-### The ETL Flow
-1. **Extract**: Ingests raw sales data from CSV. Handles missing files and logs execution metrics.
-2. **Transform**: Cleans data (imputing missing values), standardizes data types, and engineers business features (`revenue`, `tax_amount`).
-3. **Load**: Connects dynamically to SQLite (or PostgreSQL via environment variables) and loads data idempotently.
-4. **Orchestrate (Airflow)**: Replaces manual scripts with a daily scheduled DAG ensuring automated, resilient execution.
+### 1. Batch Pipeline (Historical Data)
+* **Orchestration**: Managed by **Apache Airflow** (`dags/ecommerce_etl_dag.py`).
+* **Process**: Extracts bulk CSV data, transforms it via Pandas, and loads it into the Data Warehouse.
 
----
-
-## 🛠️ Tech Stack
-* **Orchestration**: Apache Airflow
-* **Data Processing**: Python 3.x, Pandas
-* **Storage**: SQLite (Local) / PostgreSQL (Production)
-* **Analytics**: SQL, Power BI
-* **Version Control**: Git / GitHub
+### 2. Real-Time Pipeline (Streaming Data)
+* **Ingestion**: **Apache Kafka** acts as the message broker.
+* **Producer**: `scripts/producer.py` simulates real-time order generation.
+* **Consumer**: `scripts/consumer.py` processes incoming streams and stores them in the `transactions_stream` table.
 
 ---
 
-## 🚀 How to Run the Project
+## 🚀 Getting Started
 
-### 1. Set up the environment
+### 1. Environment Setup
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 2. Manual Pipeline Execution (Dev Mode)
-You can test the pipeline synchronously:
-```bash
-python scripts/pipeline.py
-```
+### 2. Kafka Setup (Streaming Mode)
+1. **Download Kafka**: [Download here](https://kafka.apache.org/downloads).
+2. **Start Zookeeper**:
+   ```bash
+   bin/zookeeper-server-start.sh config/zookeeper.properties
+   ```
+3. **Start Kafka Broker**:
+   ```bash
+   bin/kafka-server-start.sh config/server.properties
+   ```
+4. **Create Topic**:
+   ```bash
+   bin/kafka-topics.sh --create --topic orders_stream --bootstrap-server localhost:9092
+   ```
 
-### 3. Running via Apache Airflow (Production Mode)
-This project includes a DAG (`dags/ecommerce_etl_dag.py`) for automated scheduling.
-1. Set your `AIRFLOW_HOME` to this project directory:
-   ```bash
-   export AIRFLOW_HOME=$(pwd)
-   ```
-2. Initialize the Airflow Database and create a user:
-   ```bash
-   airflow db init
-   airflow users create --username admin --password admin --firstname Data --lastname Engineer --role Admin --email admin@example.com
-   ```
-3. Start the Scheduler and Webserver:
-   ```bash
-   airflow scheduler &
-   airflow webserver -p 8080
-   ```
-4. Navigate to `http://localhost:8080`, enable the `ecommerce_daily_etl` DAG, and trigger it!
+### 3. Running the Pipeline
+* **Start Streaming**:
+  Run the producer and consumer in separate terminals:
+  ```bash
+  python scripts/producer.py
+  python scripts/consumer.py
+  ```
+* **Start Batch ETL**:
+  ```bash
+  python scripts/pipeline.py
+  ```
 
 ---
 
-## 📊 Business Intelligence (Power BI Integration)
+## 📊 Business Intelligence & Analytics
 
-The database output (`data/ecommerce.db` or PostgreSQL) is intentionally modeled for immediate BI connection.
-
-**How to Connect:**
-1. Open Power BI Desktop -> `Get Data` -> `ODBC` (for SQLite) or `PostgreSQL database`.
-2. Connect to the resulting `transactions` table.
-
-**Recommended Dashboards:**
-- **KPI Cards**: `total_base_revenue`, `total_items_sold`.
-- **Bar Chart**: Total Revenue broken down by `city` (Derived from SQL Query #2).
-- **Table Matrix**: Top 10 Customers and their Lifetime Value (Derived from SQL Query #3).
+**Dashboard Insights:**
+- **Real-Time Monitor**: Track incoming orders as they happen.
+- **Revenue Trends**: Compare historical batch data vs. recent streaming data.
+- **Regional Heatmap**: Identify peak performance cities using SQL Query #2.
 
 ---
 
-## 🔮 Future Scope & Scalability
-- **Streaming Ingestion**: Introduce **Apache Kafka** to replace daily batch loads with real-time transaction streaming.
-- **Big Data Processing**: Scale the Pandas transformation layer up to **Apache Spark (PySpark)** for handling terabytes of data.
-- **Cloud Infrastructure**: Deploy the PostgreSQL Warehouse to **AWS RDS** and shift raw data extraction to **AWS S3**.
+## 🔮 Future Roadmap
+- **Spark Streaming**: Replace the Python consumer with PySpark for micro-batch processing.
+- **Cloud Migration**: Move Kafka to **Confluent Cloud** and the database to **Amazon RDS**.
+- **Data Quality (Great Expectations)**: Integrate automated data testing into the streaming flow.
