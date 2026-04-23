@@ -15,7 +15,12 @@ The system transforms raw, inconsistent event data into a structured Data Wareho
 
 ## 🏗️ Architecture & Orchestration
 
-The pipeline is built on a modular design principle, ensuring high maintainability and production readiness.
+![ETL Architecture](https://via.placeholder.com/800x400.png?text=Hybrid+Data+Pipeline:+Batch+(Airflow)+%2B+Streaming+(Kafka))
+
+### 📊 Business Intelligence Dashboard
+The pipeline connects directly to a **Power BI Dashboard** for real-time and historical visualization.
+
+![Sales Analytics Dashboard](reports/dashboard_screenshot.png)
 
 ### 1. Batch Pipeline (Historical Data)
 *   **Orchestration**: Managed by **Apache Airflow**.
@@ -50,6 +55,9 @@ ecommerce-data-pipeline/
 ├── sql/                        # Analytical Layer
 │   ├── queries.sql             # Advanced SQL (CTEs, Window Functions)
 │   └── bi_views.sql            # Pre-defined BI views
+├── reports/                    # BI & Analytics Reports
+│   ├── dashboard_screenshot.png # Visual preview of the dashboard
+│   └── ecommerce data pipeline dashboard.pbix # Power BI Source File
 ├── requirements.txt            # Dependency Management
 └── README.md                   # Documentation
 ```
