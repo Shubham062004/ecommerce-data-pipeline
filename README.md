@@ -1,62 +1,67 @@
 # 🛒 E-Commerce ETL Data Pipeline & Analytics System
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
-![Pandas](https://img.shields.io/badge/Pandas-2.2+-green.svg)
-![Airflow](https://img.shields.io/badge/Apache_Airflow-Orchestration-blue.svg)
-![Kafka](https://img.shields.io/badge/Apache_Kafka-Streaming-red.svg)
-![Database](https://img.shields.io/badge/SQLite%2FPostgreSQL-Database-blue.svg)
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![Pandas](https://img.shields.io/badge/Pandas-2.2+-green.svg)](https://pandas.pydata.org/)
+[![Airflow](https://img.shields.io/badge/Apache_Airflow-Orchestration-017CEE.svg)](https://airflow.apache.org/)
+[![Kafka](https://img.shields.io/badge/Apache_Kafka-Streaming-231F20.svg)](https://kafka.apache.org/)
+[![Database](https://img.shields.io/badge/SQLite%2FPostgreSQL-Data_Warehouse-4479A1.svg)](https://www.sqlite.org/)
 
 ## 📌 Project Overview
-This project is an end-to-end Data Engineering ecosystem built to process, clean, and analyze e-commerce transaction data. It features a **Hybrid Architecture** combining robust **Batch ETL** (Python, Airflow) with real-time **Streaming Ingestion** (Kafka).
+This project is an end-to-end **Data Engineering ecosystem** designed to ingest, clean, and analyze high-velocity e-commerce transaction data. It utilizes a **Hybrid Architecture** (Lambda-style) that seamlessly bridges the gap between daily **Batch ETL** workflows and real-time **Streaming Ingestion**.
 
-The system is designed to provide actionable business insights into revenue trends, regional performance, and customer lifetime value.
+The system transforms raw, inconsistent event data into a structured Data Warehouse, enabling actionable business intelligence regarding revenue growth, regional performance, and customer lifetime value (CLV).
 
 ---
 
 ## 🏗️ Architecture & Orchestration
 
-![ETL Architecture](https://via.placeholder.com/800x400.png?text=Hybrid+Data+Pipeline:+Batch+(Airflow)+%2B+Streaming+(Kafka))
+The pipeline is built on a modular design principle, ensuring high maintainability and production readiness.
 
 ### 1. Batch Pipeline (Historical Data)
-* **Orchestration**: Managed by **Apache Airflow** (`dags/ecommerce_etl_dag.py`).
-* **Process**: Extracts bulk CSV data, transforms it via Pandas, and loads it into the Data Warehouse daily.
+*   **Orchestration**: Managed by **Apache Airflow**.
+*   **Process**: Daily extraction of bulk CSV data, sophisticated cleaning via Pandas (imputation, type enforcement), and idempotent loading into the Warehouse.
+*   **Reliability**: Includes automatic retries, dependency management, and data quality validation.
 
 ### 2. Real-Time Pipeline (Streaming Data)
-* **Ingestion**: **Apache Kafka** acts as the message broker for sub-second event processing.
-* **Producer**: `scripts/producer.py` simulates real-time order generation.
-* **Consumer**: `scripts/consumer.py` processes incoming streams and stores them in the `transactions_stream` table.
+*   **Broker**: **Apache Kafka** handles sub-second event ingestion.
+*   **Producer**: Simulates live order generation with varying velocities.
+*   **Consumer**: Processes incoming streams on-the-fly, applying consistent transformation logic before database persistence.
 
 ---
 
 ## 📂 Project Structure
+
 ```text
 ecommerce-data-pipeline/
-├── dags/
-│   └── ecommerce_etl_dag.py    # Airflow DAG for batch orchestration
-├── data/
-│   ├── raw_data.csv            # Sample input data
-│   └── ecommerce.db            # SQLite Data Warehouse
-├── scripts/
-│   ├── extract.py              # Data extraction module
-│   ├── transform.py            # Data cleaning & feature engineering
-│   ├── load.py                 # Database loading module
-│   ├── pipeline.py             # Batch pipeline runner
-│   ├── producer.py             # Kafka event producer (Streaming)
-│   └── consumer.py             # Kafka event consumer (Streaming)
-├── sql/
-│   └── queries.sql             # Analytical SQL queries (CTEs, Window Functions)
-├── requirements.txt            # Project dependencies
-└── README.md                   # Project documentation
+├── dags/                       # Airflow Orchestration
+│   └── ecommerce_etl_dag.py    # Daily scheduled workflow logic
+├── data/                       # Storage Layer
+│   ├── raw_data.csv            # Source of truth (Raw input)
+│   └── ecommerce.db            # Production SQLite Warehouse
+├── scripts/                    # Core Python Modules
+│   ├── extract.py              # Ingestion: Reads from various sources
+│   ├── transform.py            # Logic: Cleaning & Feature Engineering
+│   ├── load.py                 # Sink: Schema-compliant DB loading
+│   ├── pipeline.py             # Orchestrator: Main ETL entry point
+│   ├── verify_load.py          # QA: Quick database health check
+│   ├── generate_insights.py    # BI: Automated KPI report generator
+│   ├── producer.py             # Kafka: Live event producer
+│   └── consumer.py             # Kafka: Real-time stream processor
+├── sql/                        # Analytical Layer
+│   ├── queries.sql             # Advanced SQL (CTEs, Window Functions)
+│   └── bi_views.sql            # Pre-defined BI views
+├── requirements.txt            # Dependency Management
+└── README.md                   # Documentation
 ```
 
 ---
 
 ## 🌟 Key Features
-- **Hybrid Data Velocity**: Seamlessly handles both daily batch uploads and sub-second real-time streams.
-- **Production-Ready Transformation**: Robust data cleaning, handling nulls, type enforcement, and financial feature engineering.
-- **Automated Orchestration**: Scheduled execution and error retries managed by Apache Airflow.
-- **Advanced SQL Analytics**: Utilizes CTEs and Window Functions for deep regional performance insights.
-- **Fault-Tolerant Loading**: Idempotent database operations ensuring data consistency across multiple runs.
+-   **Production-Grade Transformation**: Handles missing data using category-median imputation and enforces schema integrity.
+-   **Financial Engineering**: Automatically calculates revenue, tax, and total transaction amounts.
+-   **Analytical Depth**: Leverages **Window Functions** to rank customers by region and city.
+-   **Environment Agnostic**: Easily switch between SQLite and PostgreSQL via `.env` configuration.
+-   **Idempotent Loading**: Safe-to-rerun logic preventing data duplication.
 
 ---
 
@@ -64,50 +69,45 @@ ecommerce-data-pipeline/
 
 ### 1. Environment Setup
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Clone the repository
+git clone https://github.com/Shubham062004/ecommerce-data-pipeline.git
+cd ecommerce-data-pipeline
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Kafka Setup (Streaming Mode)
-1. **Download Kafka**: [Download here](https://kafka.apache.org/downloads).
-2. **Start Zookeeper**:
-   ```bash
-   bin/zookeeper-server-start.sh config/zookeeper.properties
-   ```
-3. **Start Kafka Broker**:
-   ```bash
-   bin/kafka-server-start.sh config/server.properties
-   ```
-4. **Create Topic**:
-   ```bash
-   bin/kafka-topics.sh --create --topic orders_stream --bootstrap-server localhost:9092
-   ```
+### 2. Running the Batch Pipeline
+```bash
+# Execute the full ETL cycle
+python scripts/pipeline.py
 
-### 3. Running the Pipeline
-* **Start Streaming**:
-  Run the producer and consumer in separate terminals:
-  ```bash
-  python scripts/producer.py
-  python scripts/consumer.py
-  ```
-* **Start Batch ETL**:
-  ```bash
-  python scripts/pipeline.py
-  ```
+# Verify the load status
+python scripts/verify_load.py
+
+# Generate a business insights report
+python scripts/generate_insights.py
+```
+
+### 3. Real-Time Streaming (Kafka)
+1.  **Start Services**: Ensure Zookeeper and Kafka Broker are running.
+2.  **Create Topic**: `orders_stream`
+3.  **Run Stream**:
+    ```bash
+    python scripts/producer.py  # In Terminal 1
+    python scripts/consumer.py  # In Terminal 2
+    ```
 
 ---
 
-## 📊 Business Intelligence & Analytics
-
-**Dashboard Insights:**
-- **Real-Time Monitor**: Track incoming orders as they happen.
-- **Revenue Trends**: Compare historical batch data vs. recent streaming data.
-- **Regional Heatmap**: Identify peak performance cities using SQL Query #2.
+## 📊 Sample Insights
+*   **Revenue Growth**: Real-time monitoring of daily sales trends.
+*   **Regional Performance**: Identification of high-growth markets (e.g., New York, Houston).
+*   **VIP Identification**: Automated ranking of customers by lifetime spend within localized clusters.
 
 ---
 
 ## 🔮 Future Roadmap
-- **Spark Streaming**: Replace the Python consumer with PySpark for micro-batch processing.
-- **Cloud Migration**: Move Kafka to **Confluent Cloud** and the database to **Amazon RDS**.
-- **Data Quality (Great Expectations)**: Integrate automated data testing into the streaming flow.
+-   **PySpark Integration**: Migrate consumer logic to Spark Streaming for enterprise scale.
+-   **Cloud Native**: Deploy Kafka to Confluent Cloud and DB to AWS RDS.
+-   **Data Quality**: Integrate **Great Expectations** for automated data unit testing.
