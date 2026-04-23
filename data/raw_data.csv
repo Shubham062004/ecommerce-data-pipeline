@@ -9,3 +9,93 @@ transaction_id,customer_id,city,product_name,category,price,quantity,transaction
 1008,C102,Los Angeles,Keyboard,Electronics,85.00,1,2023-10-04,completed
 1009,C107,Houston,Monitor,Electronics,300.00,2,2023-10-04,
 1010,C108,Miami,Water Bottle,Sports,15.00,3,2023-10-05,completed
+1011,C109,Boston,Tablet,Electronics,450.00,1,2023-10-05,completed
+1012,C110,Seattle,Office Desk,Furniture,320.00,1,2023-10-06,completed
+1013,C111,Denver,Tennis Racket,Sports,89.99,2,2023-10-06,completed
+1014,C112,Chicago,Microwave,Home,120.00,1,2023-10-06,pending
+1015,C113,New York,Smartphone,Electronics,999.99,1,2023-10-07,completed
+1016,C114,Los Angeles,Backpack,Accessories,60.00,2,2023-10-07,completed
+1017,C115,Houston,Air Fryer,Home,150.00,1,2023-10-07,cancelled
+1018,C116,Miami,Football,Sports,30.00,3,2023-10-08,completed
+1019,C117,San Francisco,Monitor Stand,Furniture,80.00,1,2023-10-08,completed
+1020,C118,Boston,Camera,Electronics,550.00,1,2023-10-08,
+1021,C119,Seattle,Mouse Pad,Accessories,10.00,5,2023-10-09,completed
+1022,C120,Denver,Vacuum Cleaner,Home,180.00,1,2023-10-09,completed
+1023,C121,Chicago,Electric Kettle,Home,,1,2023-10-09,completed
+1024,C122,New York,Gym Bag,Sports,70.00,1,2023-10-10,completed
+1025,C123,Los Angeles,Smart Watch,Electronics,250.00,1,2023-10-10,completed
+1026,C124,Houston,Bookshelf,Furniture,140.00,1,2023-10-10,completed
+1027,C125,Miami,Yoga Mat,Sports,25.00,2,2023-10-11,completed
+1028,C126,San Francisco,Lamp,Furniture,45.00,1,2023-10-11,pending
+1029,C127,Boston,Printer,Electronics,200.00,1,2023-10-11,completed
+1030,C128,Seattle,Chair Cushion,Furniture,35.00,2,2023-10-12,completed
+1031,C129,Denver,Speakers,Electronics,150.00,1,2023-10-12,completed
+1032,C130,Chicago,Toaster,Home,40.00,-2,2023-10-12,completed
+1033,C131,New York,Router,Electronics,120.00,1,2023-10-13,completed
+1034,C132,Los Angeles,Sunglasses,Accessories,45.00,2,2023-10-13,completed
+1035,C133,Chicago,Juicer,Home,95.00,1,2023-10-13,pending
+1036,C134,Houston,Treadmill,Sports,800.00,1,2023-10-14,completed
+1037,C135,Miami,Desk Lamp,Furniture,35.00,2,2023-10-14,completed
+1038,C136,San Francisco,External Hard Drive,Electronics,150.00,1,2023-10-14,completed
+1039,C137,Boston,Notebook,Stationery,5.00,10,2023-10-15,completed
+1040,C138,Seattle,Pen Set,Stationery,12.00,3,2023-10-15,completed
+1041,C139,Denver,Hair Dryer,Home,60.00,1,2023-10-15,completed
+1042,C140,Chicago,Smart TV,Electronics,1200.00,1,2023-10-16,completed
+1043,C141,New York,Power Bank,Electronics,30.00,2,2023-10-16,completed
+1044,C142,Los Angeles,Cap,Accessories,20.00,4,2023-10-16,completed
+1045,C143,Houston,Dumbbells,Sports,90.00,2,2023-10-17,completed
+1046,C144,Miami,Wall Clock,Home,25.00,1,2023-10-17,pending
+1047,C145,San Francisco,Office Chair,Furniture,220.00,1,2023-10-17,completed
+1048,C146,Boston,Tablet Cover,Accessories,18.00,2,2023-10-18,completed
+1049,C147,Seattle,Gaming Mouse,Electronics,70.00,1,2023-10-18,completed
+1050,C148,Denver,Water Filter,Home,130.00,1,2023-10-18,cancelled
+1051,C149,Chicago,Cricket Bat,Sports,85.00,1,2023-10-19,completed
+1052,C150,New York,Tripod,Electronics,55.00,1,2023-10-19,
+1053,C151,Los Angeles,Wallet,Accessories,40.00,1,2023-10-19,completed
+1054,C152,Houston,Sofa,Furniture,700.00,1,2023-10-20,completed
+1055,C153,Miami,Electric Fan,Home,65.00,2,2023-10-20,completed
+1056,C154,San Francisco,Camera Lens,Electronics,300.00,,2023-10-20,completed
+1057,C155,Boston,Stapler,Stationery,8.00,3,2023-10-21,completed
+1058,C156,Seattle,Monitor Arm,Furniture,110.00,1,2023-10-21,completed
+1059,C157,Denver,Running Shorts,Sports,25.00,2,2023-10-21,completed
+1060,C158,Chicago,Induction Cooktop,Home,220.00,1,2023-10-22,completed
+1061,C159,New York,VR Headset,Electronics,500.00,1,2023-10-22,completed
+1062,C160,Los Angeles,Bean Bag,Furniture,150.00,-1,2023-10-22,completed
+1063,C161,Houston,Smart Bulb,Electronics,20.00,3,2023-10-23,completed
+1064,C162,Miami,Ceiling Fan,Home,120.00,1,2023-10-23,completed
+1065,C163,San Francisco,USB Cable,Electronics,8.50,5,2023-10-23,completed
+1066,C164,Boston,Whiteboard,Stationery,35.00,1,2023-10-24,pending
+1067,C165,Seattle,Office Table,Furniture,250.00,1,2023-10-24,completed
+1068,C166,Denver,Skipping Rope,Sports,15.00,2,2023-10-24,completed
+1069,C167,Chicago,Air Conditioner,Home,600.00,1,2023-10-25,cancelled
+1070,C168,New York,Earbuds,Electronics,,2,2023-10-25,completed
+1071,C169,Los Angeles,Projector,Electronics,650.00,1,2023-10-26,completed
+1072,C170,Houston,Electric Drill,Tools,120.00,1,2023-10-26,completed
+1073,C171,Miami,Curtains,Home,75.00,2,2023-10-26,completed
+1074,C172,San Francisco,Gaming Chair,Furniture,300.00,1,2023-10-27,completed
+1075,C173,Boston,Notebook Set,Stationery,15.00,4,2023-10-27,completed
+1076,C174,Seattle,Hair Straightener,Home,55.00,1,2023-10-27,pending
+1077,C175,Denver,Basketball,Sports,35.00,2,2023-10-28,completed
+1078,C176,Chicago,Tablet Stand,Accessories,20.00,1,2023-10-28,completed
+1079,C177,New York,Smart Doorbell,Electronics,180.00,1,2023-10-28,completed
+1080,C178,Los Angeles,Desk Organizer,Stationery,25.00,2,2023-10-29,completed
+1081,C179,Houston,Refrigerator,Home,900.00,1,2023-10-29,completed
+1082,C180,Miami,Sandals,Accessories,30.00,3,2023-10-29,completed
+1083,C181,San Francisco,SSD Drive,Electronics,200.00,1,2023-10-30,completed
+1084,C182,Boston,Marker Set,Stationery,10.00,5,2023-10-30,completed
+1085,C183,Seattle,Table Fan,Home,40.00,2,2023-10-30,completed
+1086,C184,Denver,Cricket Ball,Sports,12.00,6,2023-10-31,completed
+1087,C185,Chicago,Coffee Table,Furniture,180.00,1,2023-10-31,completed
+1088,C186,New York,Wireless Charger,Electronics,35.00,2,2023-10-31,completed
+1089,C187,Los Angeles,Handbag,Accessories,85.00,1,2023-11-01,completed
+1090,C188,Houston,Gas Stove,Home,250.00,1,2023-11-01,completed
+1091,C189,Miami,Swim Goggles,Sports,20.00,2,2023-11-01,completed
+1092,C190,San Francisco,Graphics Card,Electronics,1200.00,1,2023-11-02,completed
+1093,C191,Boston,Desk Shelf,Furniture,95.00,1,2023-11-02,completed
+1094,C192,Seattle,Glue Stick,Stationery,5.00,6,2023-11-02,completed
+1095,C193,Denver,Thermos,Home,22.00,3,2023-11-03,completed
+1096,C194,Chicago,Football Shoes,Sports,130.00,1,2023-11-03,completed
+1097,C195,New York,Webcam,Electronics,75.00,1,2023-11-03,completed
+1098,C196,Los Angeles,Beanie,Accessories,18.00,2,2023-11-04,completed
+1099,C197,Houston,Water Dispenser,Home,180.00,1,2023-11-04,completed
+1100,C198,Miami,Skipping Shoes,Sports,65.00,1,2023-11-04,completed

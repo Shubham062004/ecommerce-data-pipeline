@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 # Constants from Environment
 # Use default paths if env vars are not set
 DATA_SOURCE = os.getenv('DATA_SOURCE', 'data/raw_data.csv')
+DB_PATH = os.getenv('DB_FILE', 'data/ecommerce.db')
 
 def run_pipeline():
     """
@@ -35,7 +36,7 @@ def run_pipeline():
         
         # Step 3: Load
         logger.info("PHASE 3: Loading data into destination warehouse.")
-        load_data(transformed_df, table_name='transactions')
+        load_data(transformed_df, db_path=DB_PATH, table_name='transactions')
         
         logger.info("=== ETL Pipeline Completed Successfully ===")
         
